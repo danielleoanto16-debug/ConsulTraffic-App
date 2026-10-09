@@ -1,0 +1,332 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ConsulTraffic App</title><style>
+:root{font-family:system-ui,-apple-system,'Segoe UI',sans-serif;color:#0f172a;background:#f1f5f9}*{box-sizing:border-box}body{margin:0}.app{max-width:520px;min-height:100vh;margin:auto;background:#f8fafc;padding-bottom:82px}.header{background:linear-gradient(120deg,#172554,#1e40af);color:white;padding:21px 18px 27px;border-radius:0 0 22px 22px;display:flex;justify-content:space-between;align-items:center}.brand{display:flex;align-items:center;gap:11px}.brand strong{display:block;font-size:17px}.brand small{display:block;font-size:11px;opacity:.75;margin-top:3px}.mark{letter-spacing:-1px;font-family:system-ui,-apple-system,"Segoe UI",sans-serif;font-size:19px;font-weight:900;line-height:1;text-shadow:0 1px 2px #0002;overflow:hidden;flex:0 0 45px;background:#2563eb;color:#fff;border-radius:12px;width:45px;height:45px;display:grid;place-items:center;font-weight:900;font-size:18px}.exit{background:#ffffff20;color:#fff;border:1px solid #ffffff60;border-radius:9px;padding:10px}main{padding:20px 15px}.hidden{display:none!important}h1{font-size:22px;margin:0 0 8px}h2{font-size:17px;margin:20px 0 12px}.muted{color:#64748b;font-size:13px}.card{background:white;border:1px solid #e2e8f0;border-radius:16px;padding:16px;margin:12px 0}.choice{display:flex;gap:12px;align-items:center;text-align:left;width:100%;padding:18px;background:white;border:1px solid #e2e8f0;border-radius:15px;margin:12px 0;color:#172554}.choice .symbol{font-size:27px}.choice small{display:block;color:#64748b;font-size:12px;margin-top:4px}.btn{border:0;border-radius:11px;background:#172554;color:white;padding:13px 16px;font-weight:750;cursor:pointer;min-height:45px}.btn.secondary{background:#e2e8f0;color:#172554}.btn.green{background:#15803d}.btn.red{background:#fee2e2;color:#b91c1c}.btn.wide{width:100%}.btnrow{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.btnrow>*{flex:1}input{font:inherit;width:100%;padding:12px;border:1px solid #cbd5e1;border-radius:10px;margin:6px 0 12px}label{font-size:13px;font-weight:650}.pill{font-size:11px;color:#166534;background:#dcfce7;border-radius:20px;padding:5px 9px}.topline{display:flex;justify-content:space-between;align-items:center;gap:8px}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.stat{background:white;border:1px solid #e2e8f0;border-radius:13px;padding:14px 6px;text-align:center}.stat strong{display:block;color:#172554;font-size:23px}.stat small{color:#64748b;font-size:10px}.nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:520px;display:flex;background:white;border-top:1px solid #e2e8f0;padding:8px}.nav button{flex:1;border:0;background:white;color:#475569;padding:9px 2px;font-size:12px}.nav button.active{color:#1e40af;font-weight:800}.countrow{background:white;border:1px solid #e2e8f0;border-radius:14px;padding:12px;margin:9px 0}.countrow>strong{display:block;margin-bottom:9px}.lanes{display:grid;grid-template-columns:1fr 1fr;gap:10px}.lane{display:grid;grid-template-columns:38px 1fr 38px;align-items:center;gap:4px}.lane button{border:0;border-radius:9px;background:#172554;color:white;font-size:23px;height:43px}.lane button.minus{background:#fee2e2;color:#b91c1c}.lane output{text-align:center;font-size:20px;font-weight:800}.subline{font-size:12px;color:#64748b;margin:6px 0}.message{font-size:12px;color:#475569;background:#e0f2fe;padding:12px;border-radius:10px;margin-top:12px}.section{font-size:12px;letter-spacing:.5px;font-weight:800;color:#64748b;margin:22px 0 9px}
+.toggleline{display:flex;align-items:center;gap:10px;font-size:14px;margin:8px 0}.toggleline input{width:22px;height:22px;margin:0;flex-shrink:0;accent-color:#172554}.lanes.single{grid-template-columns:1fr}.lane button:disabled{opacity:.35;cursor:not-allowed}.countrow .lane{grid-template-columns:44px 1fr 48px}.countrow .lane button{min-height:46px}
+/* Fase 3: contador compacto, adaptable y con objetivos táctiles amplios */
+select{width:100%;font:inherit;font-size:16px;padding:12px;border:1px solid #cbd5e1;border-radius:10px;margin:6px 0 12px;background:white}
+input:read-only{background:#f1f5f9}
+.counter-page{--btn-size:clamp(42px,6.4vh,58px)}
+.counter-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.counter-head h1{font-size:clamp(15px,3.8vw,20px);margin:0;overflow-wrap:anywhere}
+.counter-head .muted{margin:3px 0;font-size:11px}
+.counter-total{text-align:center;min-width:62px;color:#172554}
+.counter-total b{display:block;font-size:22px}.counter-total small{font-size:10px}
+.interval{background:#e0f2fe;color:#0c4a6e;border-radius:9px;padding:6px 9px;font-size:11px;margin:6px 0}
+.lane-totals{display:flex;justify-content:space-between;gap:6px;font-size:11px;margin:6px 0;flex-wrap:wrap}
+.counter-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+.counter-grid .countrow{margin:0;padding:7px 6px;border-radius:11px;min-width:0}
+.counter-grid .countrow>strong{font-size:11px;line-height:1.15;margin:0 0 5px;display:flex;align-items:center;gap:3px;min-height:23px}
+.counter-grid .countrow>strong span{font-size:17px}
+.counter-grid .lanes{gap:4px}
+.counter-grid .lane{grid-template-columns:minmax(36px,1fr) minmax(17px,0.6fr) minmax(36px,1fr);gap:2px;min-width:0}
+.counter-grid .lane button{width:100%;height:var(--btn-size);min-height:42px;font-size:24px;border-radius:8px;touch-action:manipulation}
+.counter-grid .lane output{font-size:clamp(14px,3.5vw,19px);min-width:0}
+.counter-actions{margin-top:9px}
+.counter-actions .btn{min-height:46px}
+@media(max-width:370px){.counter-grid{gap:4px}.counter-grid .countrow{padding:5px 3px}.counter-grid .lane{grid-template-columns:minmax(32px,1fr) minmax(15px,.5fr) minmax(32px,1fr)}.counter-grid .lane button{min-height:42px}}
+@media(min-width:650px){.app{max-width:850px}.nav{max-width:850px}.counter-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media(max-height:760px){.app:has(.counter-page) .header{padding:8px 14px;border-radius:0 0 12px 12px}.app:has(.counter-page) .mark{width:32px;height:32px}.app:has(.counter-page) main{padding:7px 10px}.app:has(.counter-page) .nav{padding:2px}.app:has(.counter-page) .nav button{padding:5px 2px}.counter-grid .countrow>strong{min-height:18px}}
+
+/* Fase 4: doble carril en lista vertical, botones táctiles amplios */
+.counter-grid:not(.one-lane){display:flex;flex-direction:column;gap:9px}
+.counter-grid:not(.one-lane) .countrow{padding:12px;margin:0}
+.counter-grid:not(.one-lane) .countrow>strong{font-size:15px;min-height:26px;margin-bottom:10px}
+.counter-grid:not(.one-lane) .countrow>strong span{font-size:22px}
+.counter-grid:not(.one-lane) .lanes{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.counter-grid:not(.one-lane) .lane{grid-template-columns:minmax(42px,1fr) minmax(24px,.6fr) minmax(42px,1fr);gap:4px}
+.counter-grid:not(.one-lane) .lane button{min-height:54px;height:54px;font-size:27px}
+.counter-grid:not(.one-lane) .lane output{font-size:21px}
+.report h2{font-size:16px;margin:20px 0 10px}.report-grand{font-weight:900;font-size:24px;color:#172554;margin-top:10px}.table-scroll{overflow-x:auto;background:white;border-radius:12px;border:1px solid #e2e8f0}.report table{width:100%;border-collapse:collapse;font-size:12px}.report th,.report td{padding:9px 7px;border-bottom:1px solid #e2e8f0;text-align:right;white-space:nowrap}.report th:first-child,.report td:first-child{text-align:left}.report thead,.report tfoot{background:#eff6ff;color:#172554}.report-buttons{display:grid;gap:9px;margin-top:20px}
+@media(max-width:370px){.counter-grid:not(.one-lane) .lanes{gap:5px}.counter-grid:not(.one-lane) .lane{grid-template-columns:minmax(37px,1fr) minmax(20px,.5fr) minmax(37px,1fr)}}
+@media print{body,.app{background:white!important;max-width:none!important}.header,.nav,.exit,.report-buttons,.message{display:none!important}main{padding:0!important}.app{padding:0!important}.report h1{font-size:20px}.report .card{border:0;padding:0;margin:0 0 12px}.report table{font-size:10px}.report th,.report td{padding:6px 5px}.report tr{break-inside:avoid}@page{size:A4;margin:12mm}}
+
+.hourchart{display:flex;flex-direction:column;gap:11px}.hourrow{display:grid;grid-template-columns:100px minmax(0,1fr) 36px;gap:9px;align-items:center;font-size:12px}.hourlabel{font-variant-numeric:tabular-nums;color:#334155}.hourtrack{height:18px;border-radius:5px;background:#e2e8f0;overflow:hidden}.hourfill{height:100%;background:#2563eb;border-radius:5px}.hourfill.peak{background:#15803d}.hourrow b{text-align:right;color:#172554}
+.worker-group{display:flex;align-items:center;justify-content:space-between;gap:10px}.worker-group strong{font-size:16px}.worker-group .subline{margin:5px 0 0}.aforo-status{font-weight:800;font-size:12px;color:#15803d}.aforo-status.done{color:#475569}.delete-aforo{margin-top:9px;background:#fff!important;color:#b91c1c!important;border:1px solid #fecaca!important}.delete-aforo:active{background:#fee2e2!important}
+/* Fase 12: solicitudes y estados de autorización (simulación local) */
+.status{display:inline-block;border-radius:999px;padding:5px 10px;font-size:11px;font-weight:800;background:#fef3c7;color:#92400e}.status.ok{background:#dcfce7;color:#166534}.status.no{background:#fee2e2;color:#991b1b}.small-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px}.small-actions .btn{flex:1;padding:10px 7px;font-size:12px}.card h3{margin:0 0 8px;font-size:15px}.demo-banner{font-size:12px;background:#fff7ed;border:1px solid #fed7aa;border-radius:10px;padding:11px;color:#9a3412;margin:12px 0}.label-info{font-size:12px;color:#64748b;margin:8px 0}.status-line{display:flex;justify-content:space-between;gap:8px;align-items:center}
+</style><meta name="theme-color" content="#172554"></head><body><div class="app"><header class="header"><div class="brand"><div class="mark" aria-label="ConsulTraffic">CT</div><div><strong>ConsulTraffic App</strong><small id="subtitle">Sistema de conteo vehicular</small></div></div><button id="exit" class="exit hidden">Salir</button></header><main id="view" aria-live="polite"></main><nav id="nav" class="nav hidden"></nav></div><script>
+'use strict';
+// Fase 17: inicio OWNER con Firebase; colaboradores y aforos siguen en demostración local.
+const view=document.querySelector('#view'),nav=document.querySelector('#nav'),exit=document.querySelector('#exit'),subtitle=document.querySelector('#subtitle');
+const categories=[['🚶','Peatón'],['🏍️','Motocicleta'],['🚗','Vehículo'],['🛻','Pickup'],['🚐','Camión liviano'],['🚚','Camión'],['🚌','Autobús'],['🚛','Tráiler']];
+const KEY='consultraffic_fase2_local';
+const ACCESS_KEY='consultraffic_f12_access_demo';
+const blank=()=>categories.map(()=>[0,0]);
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const pad=n=>String(n).padStart(2,'0');
+const clock=ms=>new Date(ms).toLocaleTimeString('es-SV',{hour:'2-digit',minute:'2-digit',hour12:true});
+const nextBoundary=ms=>Math.floor(ms/900000)*900000+900000;
+let role=null,tab='inicio',job=null,notice='',history=[],series={},selectedReport=null,selectedWorker=null;
+let access={session:null,requests:[],workerId:null};
+try{const x=JSON.parse(localStorage.getItem(ACCESS_KEY)||'null');if(x&&Array.isArray(x.requests))access={session:x.session||null,requests:x.requests,workerId:x.workerId||null};}catch(e){}
+function saveAccess(){try{localStorage.setItem(ACCESS_KEY,JSON.stringify(access))}catch(e){notice='No se pudo guardar el acceso en este navegador.'}}
+function myRequest(){return access.requests.find(x=>x.id===access.workerId)||null}
+function requestStatus(x){if(!x)return 'sin solicitud';if(x.status==='approved'&&x.until&&Date.now()>x.until)return 'expired';return x.status}
+function dateText(t){return t?new Date(t).toLocaleString('es-SV'):'Sin vencimiento'}
+function isWorkerAuthorized(){return requestStatus(myRequest())==='approved'}
+function accessGuard(){if(role==='worker'&&!isWorkerAuthorized()){tab='inicio';return false}return true}
+
+try {const stored=JSON.parse(localStorage.getItem(KEY)||'null');if(stored&&stored.version>=2){job=stored.job||null;history=Array.isArray(stored.history)?stored.history:[];series=stored.series||{};}}catch(e){console.warn('No se pudo recuperar la demostración',e)}
+function persist(){try{localStorage.setItem(KEY,JSON.stringify({version:3,job,history,series}))}catch(e){notice='No se pudo guardar en este navegador. Evita cerrar la página.'}}
+function button(label,action,cls=''){return `<button type="button" class="btn ${cls}" data-action="${action}">${label}</button>`}
+function totals(data){return data.reduce((s,x)=>[s[0]+x[0],s[1]+x[1]],[0,0])}
+function overall(){if(!job)return [0,0];const all=job.blocks.reduce((s,b)=>{const t=totals(b.counts);return [s[0]+t[0],s[1]+t[1]]},[0,0]);const now=totals(job.counts);return [all[0]+now[0],all[1]+now[1]]}
+function roll(now=Date.now()){
+ if(!job||!job.active)return;
+ let changed=false;
+ while(job.active&&job.boundary<=now){
+   job.blocks.push({start:job.start,end:job.boundary,counts:job.counts.map(x=>x.slice()),partial:job.start%900000!==0});
+   job.start=job.boundary;job.boundary+=900000;job.counts=blank();changed=true;
+ }
+ if(changed)persist();
+}
+function showOwnerLogin(error=''){role=null;subtitle.textContent='Acceso seguro del propietario';exit.classList.add('hidden');nav.classList.add('hidden');view.innerHTML=`<h1>Acceso administrador</h1><p class="muted">Ingresa con la cuenta OWNER registrada en Firebase.</p><div class="card"><label for="ownerEmail">Correo electrónico</label><input id="ownerEmail" type="email" autocomplete="username" placeholder="correo@ejemplo.com"><label for="ownerPassword">Contraseña</label><input id="ownerPassword" type="password" autocomplete="current-password"><button class="btn wide" data-action="firebase-login">Iniciar sesión</button><div class="btnrow"><button class="btn secondary" data-action="firebase-reset">Recuperar contraseña</button><button class="btn secondary" data-action="back-welcome">Volver</button></div><p id="loginMessage" class="muted" role="status">${esc(error)}</p></div>`}
+window.ctOwnerAuthChanged=(ok,error)=>{if(ok){role='owner';tab='inicio';access.session=null;saveAccess();render()}else if(role==='owner'||document.querySelector('#ownerEmail')){role=null;showOwnerLogin(error||'Cuenta no autorizada como propietario.')}};
+function welcome(){subtitle.textContent='Sistema de conteo vehicular';exit.classList.add('hidden');nav.classList.add('hidden');view.innerHTML=`<h1>Bienvenido</h1><p class="muted">Selecciona cómo deseas ingresar.</p><button class="choice" data-action="owner"><span class="symbol">🛡️</span><span><b>Administrador</b><small>Panel de control y reportes</small></span></button><button class="choice" data-action="worker"><span class="symbol">👷</span><span><b>Colaborador</b><small>Proyectos y conteo vehicular</small></span></button>`}
+function enter(r){if(r==='owner'&&!window.ctOwnerAuthenticated){showOwnerLogin();return}role=r;tab='inicio';access.session=r;saveAccess();render()}
+function requestView(){const r=myRequest();const s=requestStatus(r);return `<h1>Acceso de colaborador</h1><div class="demo-banner">Demostración local: esta solicitud solo existe en este navegador. No es una autorización real ni funciona entre teléfonos.</div>${r?`<div class="card"><h3>${esc(r.name)}</h3><span class="status ${s==='approved'?'ok':s==='rejected'||s==='revoked'||s==='expired'?'no':''}">${s==='pending'?'Pendiente de aprobación':s==='approved'?'Autorizado':s==='expired'?'Autorización vencida':s==='revoked'?'Acceso revocado':'Solicitud rechazada'}</span><p class="label-info">${s==='approved'?'Válido hasta: '+dateText(r.until):'El administrador puede aprobar desde este mismo dispositivo de prueba.'}</p>${s==='approved'?button('Entrar a mis conteos','worker-dashboard','wide green'):button('Enviar nueva solicitud','request-form','wide secondary')}</div>`:`<div class="card"><h3>Solicitar autorización</h3><label for="workerName">Nombre del colaborador</label><input id="workerName" maxlength="65" placeholder="Nombre y apellido">${button('Enviar solicitud','request-access','wide')}</div>`}`}
+
+function render(){if(role==='owner'&&!window.ctOwnerAuthenticated){role=null;showOwnerLogin();return}if(!role)return welcome();roll();subtitle.textContent=role==='owner'?'Panel administrador':'Trabajo de campo';exit.classList.remove('hidden');nav.classList.remove('hidden');const tabs=role==='owner'?[['inicio','Inicio'],['aforos','Aforos'],['usuarios','Usuarios'],['ajustes','Ajustes']]:[['inicio','Inicio'],['conteo','Conteo'],['misaforos','Mis aforos'],['perfil','Perfil']];nav.innerHTML=tabs.map(([id,name])=>`<button data-tab="${id}" class="${tab===id?'active':''}">${name}</button>`).join('');view.innerHTML=(role==='owner'?ownerView():(accessGuard()?workerView():requestView()));}
+function workerName(id){return access.requests.find(r=>r.id===id)?.name||'Colaborador sin identificar'}
+function workerJobs(id){return history.filter(h=>h.workerId===id)}
+function ownerAforos(){
+ const ids=[...new Set([...access.requests.map(r=>r.id),...history.map(h=>h.workerId||'legacy'),...(job?.active?[job.workerId||'legacy']:[])])];
+ if(!ids.length)return '<div class="card">Aún no hay colaboradores ni aforos en este dispositivo.</div>';
+ if(tab==='aforos'&&selectedWorker){
+  const id=selectedWorker,items=workerJobs(id).slice().reverse(),current=job?.active&&(job.workerId||'legacy')===id?job:null;
+  return `<h1>${esc(id==='legacy'?'Aforos anteriores':workerName(id))}</h1><p class="muted">Aforos realizados y en proceso</p>${button('← Volver a colaboradores','aforos-back','wide secondary')}${current?`<div class="card"><div class="status-line"><b>${esc(current.name)}</b><span class="aforo-status">● En proceso</span></div><p class="subline">${current.lanes} carril(es) · Desde ${dateText(current.blocks[0]?.start||current.start)}</p><p class="subline">Total registrado: ${overall()[0]+overall()[1]} vehículos. Solo consulta; el conteo sigue activo en el dispositivo.</p><button type="button" class="btn wide delete-aforo" data-delete-active="1">Eliminar aforo en proceso</button></div>`:''}${items.map(h=>`<div class="card"><div class="status-line"><b>${esc(h.name)}</b><span class="aforo-status done">Finalizado</span></div><p class="subline">${h.total} vehículos · ${dateText(h.finished)}</p><button class="btn wide" data-admin-report="${esc(String(h.id||h.finished))}">Ver reporte y PDF</button><button type="button" class="btn wide delete-aforo" data-delete-aforo="${esc(String(h.id||h.finished))}">Eliminar aforo</button></div>`).join('')||(!current?'<div class="card">Este colaborador todavía no tiene aforos.</div>':'')}`;
+ }
+ return `<h1>Aforos por colaborador</h1><p class="muted">Selecciona un colaborador para consultar sus aforos.</p>${ids.map(id=>{const n=workerJobs(id).length,ongoing=job?.active&&(job.workerId||'legacy')===id;return `<button type="button" class="choice" data-worker-folder="${esc(id)}"><span class="symbol">👷</span><span><b>${esc(id==='legacy'?'Aforos anteriores sin asignar':workerName(id))}</b><small>${n} finalizado(s)${ongoing?' · 1 en proceso':''}</small></span><span aria-hidden="true">›</span></button>`}).join('')}`;
+}
+function ownerView(){
+ const pending=access.requests.filter(r=>requestStatus(r)==='pending');
+ const active=access.requests.filter(r=>requestStatus(r)==='approved');
+ const rows=access.requests.map(r=>{const status=requestStatus(r);return `<div class="card"><div class="status-line"><h3>${esc(r.name)}</h3><span class="status ${status==='approved'?'ok':status==='pending'?'':'no'}">${status==='pending'?'Pendiente':status==='approved'?'Autorizado':status==='expired'?'Vencido':status==='revoked'?'Revocado':'Rechazado'}</span></div><p class="subline">Solicitud: ${dateText(r.created)}${r.until?'<br>Vence: '+dateText(r.until):''}</p>${status==='pending'?`<label for="days-${esc(r.id)}">Duración de autorización</label><select id="days-${esc(r.id)}"><option value="1">1 día</option><option value="7" selected>7 días</option><option value="30">30 días</option><option value="90">90 días</option></select><div class="small-actions"><button class="btn green" data-approve="${esc(r.id)}">Aprobar</button><button class="btn red" data-reject="${esc(r.id)}">Rechazar</button></div>`:status==='approved'?`<div class="small-actions"><button class="btn red" data-revoke="${esc(r.id)}">Revocar acceso</button></div>`:`<div class="small-actions"><button class="btn secondary" data-renew="${esc(r.id)}">Renovar 7 días</button></div>`}</div>`}).join('');
+ const banner='<div class="demo-banner">Sesión OWNER verificada con Firebase. Los aforos, colaboradores y autorizaciones de esta fase siguen siendo datos locales de demostración; aún no se sincronizan entre dispositivos.</div>';
+ if(tab==='inicio')return `<h1>Panel administrador</h1>${banner}<div class="stats"><div class="stat"><strong>${active.length}</strong><small>Autorizados</small></div><div class="stat"><strong>${history.length}</strong><small>Aforos locales</small></div><div class="stat"><strong>${pending.length}</strong><small>Solicitudes</small></div></div><div class="card"><h3>Solicitudes de acceso</h3><p class="subline">${pending.length?pending.length+' solicitud(es) esperando aprobación':'No hay solicitudes pendientes.'}</p>${button('Gestionar colaboradores','usuarios','wide')}</div><div class="card"><h3>Aforos guardados en este teléfono</h3><p class="subline">${history.length} aforo(s) finalizados en almacenamiento local.</p>${button('Ver aforos','aforos','wide secondary')}</div>`;
+ if(tab==='aforos')return banner+ownerAforos();
+ if(tab==='usuarios')return `<h1>Colaboradores</h1>${banner}${rows||'<div class="card">No hay solicitudes todavía. Desde Colaborador puedes crear una solicitud de prueba.</div>'}`;
+ if(tab==='detalle')return reportView(history.find(h=>String(h.id||h.finished)===String(selectedReport)));
+ return `<h1>Configuración</h1>${banner}<div class="card"><h3>Propietario (OWNER)</h3><p class="muted">La creación de administradores secundarios, las credenciales y la recuperación de acceso se habilitarán al conectar autenticación segura.</p></div>`;
+}
+
+// Agrupación por hora de reloj. Cada tramo se atribuye a la hora en que comenzó.
+function hourlySummary(h){
+ const by=new Map();
+ for(const b of (h.blocks||[])){
+  const d=new Date(b.start),key=new Date(d.getFullYear(),d.getMonth(),d.getDate(),d.getHours()).getTime();
+  const t=totals(b.counts||blank());
+  const r=by.get(key)||{key,total:0,a:0,b:0,minutes:0};
+  r.a+=t[0];r.b+=t[1];r.total+=t[0]+t[1];
+  r.minutes+=Math.max(0,Math.min(60,(b.end-b.start)/60000));by.set(key,r);
+ }
+ return [...by.values()].sort((a,b)=>a.key-b.key);
+}
+function hourLabel(ms){const d=new Date(ms),e=new Date(ms+3600000);return clock(d.getTime())+'–'+clock(e.getTime())}
+function hourlyChart(h){
+ const data=hourlySummary(h),max=Math.max(1,...data.map(x=>x.total));
+ if(!data.length)return '<p class="muted">Sin intervalos para graficar.</p>';
+ const peak=Math.max(...data.map(x=>x.total));
+ return `<div class="card"><h2 style="margin-top:0">Vehículos por hora</h2><p class="subline">Cada barra muestra los vehículos registrados dentro de esa hora. Las horas incompletas se identifican con *.</p><div class="hourchart">${data.map(x=>`<div class="hourrow"><span class="hourlabel">${hourLabel(x.key)}${x.minutes<59.5?' *':''}</span><div class="hourtrack"><div class="hourfill ${x.total===peak&&peak>0?'peak':''}" style="width:${Math.max(0,100*x.total/max)}%"></div></div><b>${x.total}</b></div>`).join('')}</div><p class="subline">Mayor registro: <b>${data.filter(x=>x.total===peak).map(x=>hourLabel(x.key)).join(', ')}</b> (${peak} vehículos). * Hora con cobertura parcial; no es comparable directamente con una hora completa.</p></div>`;
+}
+function reportView(h){
+ if(!h)return `<h1>Aforo no encontrado</h1>${button('Volver a mis aforos','misaforos','wide')}`;
+ const sums=categories.map((_,i)=>h.blocks.reduce((acc,b)=>[acc[0]+(b.counts?.[i]?.[0]||0),acc[1]+(b.counts?.[i]?.[1]||0)],[0,0]));
+ const grand=totals(sums), started=h.blocks[0]?.start||h.finished;
+ return `<section class="report"><h1>Reporte de aforo</h1><div class="card"><h2>${esc(h.name)}</h2><p class="subline">Inicio: ${new Date(started).toLocaleString('es-SV')}<br>Fin: ${new Date(h.finished).toLocaleString('es-SV')}<br>Carriles: ${h.lanes}</p><div class="report-grand">TOTAL: ${grand[0]+grand[1]}</div></div><h2>Resumen por categoría</h2><div class="table-scroll"><table><thead><tr><th>Categoría</th><th>A</th>${h.lanes===2?'<th>B</th>':''}<th>Total</th></tr></thead><tbody>${categories.map((c,i)=>`<tr><td>${c[0]} ${esc(c[1])}</td><td>${sums[i][0]}</td>${h.lanes===2?`<td>${sums[i][1]}</td>`:''}<td>${sums[i][0]+sums[i][1]}</td></tr>`).join('')}</tbody><tfoot><tr><th>Total</th><th>${grand[0]}</th>${h.lanes===2?`<th>${grand[1]}</th>`:''}<th>${grand[0]+grand[1]}</th></tr></tfoot></table></div>${hourlyChart(h)}<h2>Tramos registrados</h2><div class="table-scroll"><table><thead><tr><th>Desde</th><th>Hasta</th><th>A</th>${h.lanes===2?'<th>B</th>':''}<th>Total</th></tr></thead><tbody>${h.blocks.map(b=>{const t=totals(b.counts||blank());return `<tr><td>${clock(b.start)}</td><td>${clock(b.end)}${b.partial?' *':''}</td><td>${t[0]}</td>${h.lanes===2?`<td>${t[1]}</td>`:''}<td>${t[0]+t[1]}</td></tr>`}).join('')}</tbody></table></div><p class="subline">* Tramo parcial. Los intervalos se alinean a los minutos 00, 15, 30 y 45.</p></section><div class="report-buttons">${button('Descargar PDF','pdf','wide green')}${button(role==='owner'?'Volver a aforos':'Volver a mis aforos',role==='owner'?'aforos':'misaforos','wide secondary')}</div>`;
+}
+function makeNewForm(){
+ const bases=Object.keys(series).sort((a,b)=>a.localeCompare(b,'es'));
+ return `<div class="card"><b>Nuevo conteo</b><p class="subline">Usa un punto existente o escribe uno nuevo. El número de día se asigna automáticamente.</p><label for="baseSelect">Punto de conteo</label><select id="baseSelect"><option value="">Nuevo punto</option>${bases.map(n=>`<option value="${esc(n)}">${esc(n)} (siguiente: Día ${series[n]+1})</option>`).join('')}</select><label for="newproject">Nombre del punto</label><input id="newproject" maxlength="70" placeholder="Ej. Santa Ana"><label class="toggleline"><input id="twolanes" type="checkbox"> Activar dos carriles</label><p class="subline">Un carril o dos sentidos de circulación.</p>${button('Iniciar conteo','create','wide')}</div>`;
+}
+function workerView(){
+ const myHistory=history.filter(h=>h.workerId===access.workerId);
+ const myJob=job?.workerId===access.workerId?job:null;
+ if(tab==='inicio')return `<h1>Hola, ${esc(myRequest()?.name || 'colaborador')}</h1><p class="muted">Tus conteos guardados en este dispositivo.</p>${myJob?.active?`<div class="card"><b>${esc(job.name)}</b><p class="subline">En curso · ${myJob.lanes} carril(es)</p>${button('Continuar conteo','conteo','wide green')}</div>`:makeNewForm()}${myHistory.length?`<div class="section">ÚLTIMOS CONTEOS</div>${myHistory.slice(-3).reverse().map(h=>`<div class="card"><b>${esc(h.name)}</b><p class="subline">Finalizado · ${new Date(h.finished).toLocaleDateString('es-SV')}</p></div>`).join('')}`:''}`;
+ if(tab==='conteo'){
+  if(!myJob)return `<h1>Conteo</h1><p class="muted">Primero crea un conteo desde Inicio.</p>${button('Ir a inicio','inicio','wide')}`;
+  const [a,b]=totals(job.counts),[allA,allB]=overall();
+  return `<div class="counter-page"><div class="counter-head"><div><h1>${esc(job.name)}</h1><p class="muted">${job.active?'● En curso':'Finalizado'} · ${myJob.lanes} carril(es)</p></div><div class="counter-total"><b>${allA+allB}</b><small>Total</small></div></div>${job.active?`<div class="interval" id="clockInfo">${clock(job.start)} – ${clock(job.boundary)} · cierre automático</div>`:''}<div class="lane-totals"><span>Carril A: <b>${a}</b></span>${job.lanes===2?`<span>Carril B: <b>${b}</b></span>`:''}<span>Tramo: <b>${a+b}</b></span></div><div class="counter-grid ${job.lanes===1?'one-lane':''}">${categories.map(([emoji,name],i)=>`<div class="countrow"><strong><span>${emoji}</span> ${name}</strong><div class="lanes ${job.lanes===1?'single':''}">${Array.from({length:job.lanes},(_,l)=>`<div class="lane"><button type="button" class="minus" data-count="${i},${l},-1" ${job.active?'':'disabled'} aria-label="Restar ${name} carril ${l?'B':'A'}">−</button><output>${job.counts[i][l]}</output><button type="button" data-count="${i},${l},1" ${job.active?'':'disabled'} aria-label="Sumar ${name} carril ${l?'B':'A'}">+</button></div>`).join('')}</div></div>`).join('')}</div><div class="counter-actions">${job.active?button('Terminar conteo','finish','wide green'):button('Crear otro conteo','new','wide')}</div></div>${!job.active?`<div class="card"><b>Conteo finalizado</b><p class="subline">${job.blocks.length} tramos guardados · Total ${allA+allB}</p></div>`:''}`;
+ }
+ if(tab==='detalle')return reportView(myHistory.find(h=>String(h.id||h.finished)===String(selectedReport)));
+ if(tab==='misaforos')return `<h1>Mis aforos</h1>${myJob?.active?`<div class="card"><b>${esc(job.name)}</b><p class="subline">En curso</p>${button('Abrir conteo','conteo','wide')}</div>`:''}${myHistory.length?myHistory.slice().reverse().map(h=>`<div class="card"><b>${esc(h.name)}</b><p class="subline">Finalizado · ${h.blocks.length} tramos · ${h.total} registros</p><button type="button" class="btn wide" data-report="${esc(String(h.id||h.finished))}">Ver reporte y PDF</button></div>`).join(''):'<p class="muted">Aún no tienes conteos finalizados.</p>'}`;
+ return `<h1>Mi perfil</h1><div class="card"><b>${esc(myRequest()?.name || 'Colaborador')}</b><p class="muted">La autenticación real se conectará posteriormente.</p></div>`;
+}
+document.addEventListener('click',e=>{
+ const approve=e.target.closest('[data-approve],[data-reject],[data-revoke],[data-renew]');
+ if(approve&&role==='owner'){
+  const kind=approve.hasAttribute('data-approve')?'approve':approve.hasAttribute('data-reject')?'reject':approve.hasAttribute('data-revoke')?'revoke':'renew';
+  const id=approve.getAttribute('data-'+kind);const r=access.requests.find(x=>x.id===id);if(!r)return;
+  if(kind==='approve'){const days=Number(document.getElementById('days-'+id)?.value||7);r.status='approved';r.until=Date.now()+days*86400000}
+  if(kind==='reject')r.status='rejected';if(kind==='revoke')r.status='revoked';if(kind==='renew'){r.status='approved';r.until=Date.now()+7*86400000}
+  saveAccess();notice='Estado de autorización actualizado (solo demostración local).';render();return;
+ }
+ const delFinished=e.target.closest('[data-delete-aforo]');
+ if(delFinished&&role==='owner'){
+  const id=delFinished.dataset.deleteAforo;
+  const idx=history.findIndex(h=>String(h.id||h.finished)===id);
+  if(idx<0)return;
+  const h=history[idx];
+  if(!confirm(`¿Eliminar definitivamente el aforo «${h.name}»?\n\nSe perderán sus tramos y reportes guardados en este dispositivo. Esta acción no se puede deshacer.`))return;
+  history.splice(idx,1);
+  if(String(selectedReport)===id)selectedReport=null;
+  persist();notice='Aforo eliminado del historial local.';tab='aforos';render();return;
+ }
+ const delActive=e.target.closest('[data-delete-active]');
+ if(delActive&&role==='owner'){
+  if(!job?.active||!selectedWorker||(job.workerId||'legacy')!==selectedWorker)return;
+  if(!confirm(`¿Eliminar el aforo EN PROCESO «${job.name}»?\n\nSe perderá todo el conteo sin finalizar. No se puede deshacer.`))return;
+  job=null;persist();notice='Aforo en proceso eliminado del dispositivo.';tab='aforos';render();return;
+ }
+ const folder=e.target.closest('[data-worker-folder]');if(folder&&role==='owner'){selectedWorker=folder.dataset.workerFolder;tab='aforos';render();return}
+ const adminReport=e.target.closest('[data-admin-report]');if(adminReport&&role==='owner'){selectedReport=adminReport.dataset.adminReport;tab='detalle';render();return}
+ const count=e.target.closest('[data-count]');if(count){if(role!=='worker'||!isWorkerAuthorized()||!job||!job.active||job.workerId!==access.workerId)return;roll();const [i,l,d]=count.dataset.count.split(',').map(Number);if(i<0||i>=categories.length||l<0||l>=job.lanes)return;job.counts[i][l]=Math.max(0,job.counts[i][l]+d);persist();render();return}
+ const report=e.target.closest('[data-report]');if(report){selectedReport=report.dataset.report;tab='detalle';render();return}
+ const t=e.target.closest('[data-tab]');if(t){tab=t.dataset.tab;if(tab==='aforos')selectedWorker=null;render();return}
+ const btn=e.target.closest('[data-action]');if(!btn)return;const action=btn.dataset.action;
+ if(action==='owner'||action==='worker')enter(action);
+  else if(action==='back-welcome')welcome();
+  else if(action==='firebase-login'){const email=document.querySelector('#ownerEmail')?.value.trim(),password=document.querySelector('#ownerPassword')?.value;const msg=document.querySelector('#loginMessage');if(!email||!password){if(msg)msg.textContent='Escribe tu correo y contraseña.';return}if(!window.ctFirebase){if(msg)msg.textContent='Firebase todavía está cargando. Intenta nuevamente.';return}if(msg)msg.textContent='Verificando acceso...';const timer=setTimeout(()=>{if(document.querySelector('#loginMessage')?.textContent==='Verificando acceso...')document.querySelector('#loginMessage').textContent='La verificación está tardando demasiado. Abre la app desde una dirección HTTPS (no desde un visor de archivos) y revisa la conexión.'},12000);window.ctFirebase.login(email,password).then(()=>{clearTimeout(timer);if(document.querySelector('#loginMessage'))document.querySelector('#loginMessage').textContent='Contraseña aceptada. Comprobando permisos OWNER en Firestore...'}).catch(err=>{clearTimeout(timer);const el=document.querySelector('#loginMessage');if(el)el.textContent='Error de acceso: '+(err?.code||err?.message||'desconocido')})}
+  else if(action==='firebase-reset'){const email=document.querySelector('#ownerEmail')?.value.trim(),msg=document.querySelector('#loginMessage');if(!email){if(msg)msg.textContent='Escribe primero tu correo para recuperar el acceso.';return}window.ctFirebase?.reset(email).then(()=>{if(msg)msg.textContent='Si el correo corresponde a una cuenta válida, recibirás instrucciones para recuperar el acceso.'}).catch(()=>{if(msg)msg.textContent='No se pudo solicitar la recuperación. Revisa el correo o la conexión.'})}
+ else if(action==='request-access'&&role==='worker'){
+  const name=document.getElementById('workerName')?.value.trim();if(!name){document.getElementById('workerName')?.focus();return}
+  const id='req-'+Date.now()+'-'+Math.floor(Math.random()*1e6);access.requests.push({id,name,status:'pending',created:Date.now(),until:null});access.workerId=id;saveAccess();notice='Solicitud creada en este dispositivo de demostración.';render();
+ }
+ else if(action==='request-form'&&role==='worker'){access.workerId=null;saveAccess();render()}
+ else if(action==='worker-dashboard'&&role==='worker'&&isWorkerAuthorized()){tab='inicio';render()}
+
+ else if(action==='pdf'){downloadPDF(history.find(h=>String(h.id||h.finished)===String(selectedReport)))}
+ else if(action==='aforos-back'&&role==='owner'){selectedWorker=null;tab='aforos';render()}
+ else if(['aforos','usuarios','conteo','inicio','misaforos'].includes(action)){if(action==='aforos'&&tab!=='detalle')selectedWorker=null;tab=action;render()}
+ else if(action==='create'&&role==='worker'&&isWorkerAuthorized()){
+  const selected=document.querySelector('#baseSelect')?.value||'';
+  const typed=document.querySelector('#newproject')?.value.trim()||'';
+  const base=(selected||typed).replace(/\s*\(D[ií]a\s+\d+\)\s*$/i,'').trim();
+  if(!base){document.querySelector('#newproject')?.focus();return}
+  if(job?.active){notice='Primero termina el conteo actual.';render();return}
+  const day=(series[base]||0)+1;series[base]=day;
+  const now=Date.now();job={base,day,name:`${base} (Día ${day})`,lanes:document.querySelector('#twolanes')?.checked?2:1,active:true,workerId:access.workerId,start:now,boundary:nextBoundary(now),counts:blank(),blocks:[]};
+  persist();tab='conteo';render();
+ }
+ else if(action==='finish'&&role==='worker'&&isWorkerAuthorized()&&job?.active){
+  roll();if(!confirm('¿Terminar el conteo? Se guardará el tramo parcial.'))return;
+  const now=Date.now();job.blocks.push({start:job.start,end:now,counts:job.counts.map(x=>x.slice()),partial:true});job.active=false;
+  const [ta,tb]=overall();history.push({id:String(now),workerId:job.workerId||access.workerId,name:job.name,base:job.base,day:job.day,lanes:job.lanes,blocks:job.blocks,finished:now,total:ta+tb});selectedReport=String(now);job.counts=blank();job=null;
+  persist();tab='misaforos';notice='Conteo finalizado. Abre el reporte para verlo o guardarlo en PDF.';render();
+ }
+ else if(action==='new'){tab='inicio';render()}
+
+});
+document.addEventListener('change',e=>{if(e.target.id==='baseSelect'){const name=document.querySelector('#newproject');if(name){name.value=e.target.value;name.readOnly=!!e.target.value;}}});
+exit.addEventListener('click',()=>{const wasOwner=role==='owner';role=null;tab='inicio';access.session=null;saveAccess();welcome();if(wasOwner){window.ctOwnerAuthenticated=false;window.ctFirebase?.logout().catch(()=>alert('No se pudo cerrar la sesión de Firebase.'))}});
+// Al volver a abrir la página, cerrar tramos vencidos aunque el navegador haya suspendido temporizadores.
+setInterval(()=>{if(role==='worker'&&job?.active){const old=job.boundary;roll();if(job.boundary!==old&&tab==='conteo')render();else {const clockEl=document.querySelector('#clockInfo');if(clockEl)clockEl.textContent=`Tramo actual: ${clock(job.start)} – ${clock(job.boundary)}. Cierre automático según el reloj.`}}},1000);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden){roll();if(role)render()}});
+if(access.session==='worker'){role='worker';render()}else welcome();
+
+
+// PDF autónomo, sin bibliotecas externas ni ventana de impresión.
+// Genera un PDF A4 multipágina en el propio dispositivo.
+function downloadPDF(h){
+ if(!h){alert('No se encontró el aforo.');return;}
+ try{
+  const clean=s=>String(s??'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^\x20-\x7e]/g,'?');
+  const escPdf=s=>clean(s).replace(/\\/g,'\\\\').replace(/\(/g,'\\(').replace(/\)/g,'\\)');
+  const fmt=ms=>new Date(ms).toLocaleString('es-SV',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit',hour12:false});
+  const short=ms=>new Date(ms).toLocaleTimeString('es-SV',{hour:'2-digit',minute:'2-digit',hour12:false});
+  const sums=categories.map((_,i)=>h.blocks.reduce((a,b)=>[a[0]+(b.counts?.[i]?.[0]||0),a[1]+(b.counts?.[i]?.[1]||0)],[0,0]));
+  const grand=totals(sums),total=grand[0]+grand[1], first=h.blocks[0]?.start||h.finished;
+  const objects=[null],add=x=>(objects.push(x),objects.length-1);
+  const catalog=add(''),pagesId=add('');
+  const normal=add('<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>');
+  const bold=add('<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>');
+  const pages=[];let commands=[],y=0,pageNo=0;
+  const color=(r,g,b)=>`${r} ${g} ${b}`;
+  const rect=(x,top,w,height,fill)=>commands.push(`${fill} rg ${x} ${842-top-height} ${w} ${height} re f`);
+  const text=(str,x,top,size=10,isBold=false,fill='0.12 0.18 0.29')=>commands.push(`BT ${fill} rg /${isBold?'F2':'F1'} ${size} Tf 1 0 0 1 ${x} ${842-top-size} Tm (${escPdf(str)}) Tj ET`);
+  const line=(x1,top,x2,c='0.86 0.89 0.94')=>commands.push(`${c} RG 0.7 w ${x1} ${842-top} m ${x2} ${842-top} l S`);
+  const footer=()=>{line(42,802,553);text('ConsulTraffic App  |  Reporte tecnico de aforo vehicular',42,811,8,false,'0.43 0.49 0.58');text('Pagina '+pageNo,505,811,8,true,'0.28 0.35 0.48')};
+  const finish=()=>{footer();const stream=commands.join('\n')+'\n';const content=add('<< /Length '+stream.length+' >>\nstream\n'+stream+'endstream');const page=add('<< /Type /Page /Parent '+pagesId+' 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 '+normal+' 0 R /F2 '+bold+' 0 R >> >> /Contents '+content+' 0 R >>');pages.push(page+' 0 R')};
+  const fresh=()=>{commands=[];pageNo++;rect(0,0,595,8,'0.09 0.16 0.34');
+    rect(42,31,43,43,'0.14 0.39 0.92');
+    text('CT',49,41,22,true,'1 1 1');
+    text('ConsulTraffic App',97,34,17,true,'0.09 0.16 0.34');
+    text('INFORME TECNICO DE AFORO VEHICULAR',97,57,9,true,'0.27 0.40 0.63');
+    line(42,88,553);y=106};
+  const need=height=>{if(y+height>785){finish();fresh()}};
+  const heading=title=>{need(43);rect(42,y,511,28,'0.91 0.94 0.98');rect(42,y,4,28,'0.14 0.31 0.65');text(title,55,y+6,11,true,'0.09 0.16 0.34');y+=40};
+  const tableHead=(cols)=>{need(30);rect(42,y,511,26,'0.09 0.16 0.34');cols.forEach(c=>text(c[0],c[1],y+7,9,true,'1 1 1'));y+=26};
+  const tableRow=(cols,index,emph=false)=>{need(26);rect(42,y,511,25,emph?'0.85 0.91 0.98':index%2?'0.96 0.97 0.99':'1 1 1');cols.forEach(c=>text(String(c[0]),c[1],y+7,9,emph,'0.12 0.18 0.29'));line(42,y+25,553);y+=25};
+  fresh();
+  text('PUNTO DE AFORO',42,y,9,true,'0.43 0.49 0.58');y+=16;
+  const name=clean(h.name);text(name.slice(0,59),42,y,18,true,'0.09 0.16 0.34');y+=34;
+  rect(42,y,511,75,'0.95 0.97 0.99');
+  text('INICIO',54,y+9,8,true,'0.43 0.49 0.58');text(fmt(first),54,y+25,11,true);
+  text('FINALIZACION',300,y+9,8,true,'0.43 0.49 0.58');text(fmt(h.finished),300,y+25,11,true);
+  text('CONFIGURACION',54,y+51,8,true,'0.43 0.49 0.58');text(h.lanes===2?'Doble carril':'Un carril',158,y+49,10,true);
+  y+=89;
+  rect(42,y,511,79,'0.09 0.16 0.34');
+  text('TOTAL DE REGISTROS',58,y+10,10,true,'0.79 0.86 0.96');text(String(total),58,y+29,29,true,'1 1 1');
+  text('CARRIL A',323,y+12,9,true,'0.79 0.86 0.96');text(String(grand[0]),323,y+30,19,true,'1 1 1');
+  if(h.lanes===2){text('CARRIL B',445,y+12,9,true,'0.79 0.86 0.96');text(String(grand[1]),445,y+30,19,true,'1 1 1')}
+  y+=97;
+  heading('01  RESUMEN POR CATEGORIA');
+  tableHead([['CATEGORIA',53],['CARRIL A',310],...(h.lanes===2?[['CARRIL B',390]]:[]),['TOTAL',482]]);
+  categories.forEach((c,i)=>tableRow([[c[1],53],[sums[i][0],317],...(h.lanes===2?[[sums[i][1],407]]:[]),[sums[i][0]+sums[i][1],496]],i));
+  tableRow([['TOTAL GENERAL',53],[grand[0],317],...(h.lanes===2?[[grand[1],407]]:[]),[total,496]],8,true);
+  y+=18;heading('02  INTERVALOS DE CONTEO');
+  tableHead([['TRAMO',53],['DESDE',145],['HASTA',243],['A',341],...(h.lanes===2?[['B',403]]:[]),['TOTAL',485]]);
+  h.blocks.forEach((b,i)=>{
+    if(y+55>785){finish();fresh();heading('02  INTERVALOS DE CONTEO (CONTINUACION)');tableHead([['TRAMO',53],['DESDE',145],['HASTA',243],['A',341],...(h.lanes===2?[['B',403]]:[]),['TOTAL',485]])}
+    const t=totals(b.counts||blank());tableRow([[String(i+1)+(b.partial?' *':''),53],[short(b.start),145],[short(b.end),243],[t[0],341],...(h.lanes===2?[[t[1],403]]:[]),[t[0]+t[1],485]],i);
+  });
+  y+=13;need(60);text('* Indica un tramo parcial (duracion menor a 15 minutos).',43,y,9,false,'0.39 0.45 0.55');y+=17;
+  text('Cortes automaticos segun el reloj: 00, 15, 30 y 45 minutos.',43,y,9,false,'0.39 0.45 0.55');y+=25;
+  heading('03  GRAFICA DE CONCURRENCIA POR HORA');
+  const hourly=hourlySummary(h),peak=Math.max(0,...hourly.map(v=>v.total));
+  need(37);text('Vehiculos registrados por hora de reloj',44,y,9,false,'0.39 0.45 0.55');y+=22;
+  for(const row of hourly){
+    need(38);
+    const isPeak=peak>0&&row.total===peak;
+    text(short(row.key)+' - '+short(row.key+3600000)+(row.minutes<59.5?' *':''),44,y+6,9,isPeak);
+    rect(173,y+4,326,15,'0.91 0.94 0.98');
+    if(row.total>0)rect(173,y+4,326*row.total/Math.max(1,peak),15,isPeak?'0.10 0.55 0.42':'0.15 0.36 0.70');
+    text(String(row.total),511,y+6,10,true,'0.09 0.16 0.34');y+=31;
+  }
+  need(63);y+=8;
+  text('Mayor registro: '+hourly.filter(v=>v.total===peak).map(v=>short(v.key)+'-'+short(v.key+3600000)).join(', ').slice(0,68),44,y,9,true);y+=17;
+  text('* Hora parcial: comparar con precaucion frente a horas completas.',44,y,8,false,'0.39 0.45 0.55');y+=31;
+  heading('04  DETALLE POR INTERVALO Y CATEGORIA');
+  h.blocks.forEach((b,i)=>{
+    need(80);rect(42,y,511,25,'0.91 0.94 0.98');text('TRAMO '+(i+1)+'  |  '+short(b.start)+' - '+short(b.end)+(b.partial?'  |  PARCIAL':''),52,y+6,9,true,'0.09 0.16 0.34');y+=29;
+    const vals=categories.map((c,k)=>({name:c[1],a:b.counts?.[k]?.[0]||0,b:b.counts?.[k]?.[1]||0})).filter(v=>v.a+v.b>0);
+    if(!vals.length){text('Sin registros en este intervalo.',54,y+4,9);y+=23}
+    vals.forEach((v,j)=>{need(23);rect(42,y,511,21,j%2?'0.96 0.97 0.99':'1 1 1');text(v.name,54,y+5,9);text('A: '+v.a+(h.lanes===2?'    B: '+v.b:'')+'    Total: '+(v.a+v.b),332,y+5,9,true);y+=21});y+=12;
+  });
+  finish();objects[catalog]='<< /Type /Catalog /Pages '+pagesId+' 0 R >>';objects[pagesId]='<< /Type /Pages /Kids ['+pages.join(' ')+'] /Count '+pages.length+' >>';
+  let pdf='%PDF-1.4\n';const offsets=[0];for(let i=1;i<objects.length;i++){offsets[i]=pdf.length;pdf+=i+' 0 obj\n'+objects[i]+'\nendobj\n'}
+  const xref=pdf.length;pdf+='xref\n0 '+objects.length+'\n0000000000 65535 f \n';for(let i=1;i<objects.length;i++)pdf+=String(offsets[i]).padStart(10,'0')+' 00000 n \n';pdf+='trailer\n<< /Size '+objects.length+' /Root '+catalog+' 0 R >>\nstartxref\n'+xref+'\n%%EOF';
+  const blob=new Blob([Uint8Array.from(pdf,c=>c.charCodeAt(0))],{type:'application/pdf'}),url=URL.createObjectURL(blob),a=document.createElement('a');
+  a.href=url;a.download='ConsulTraffic_'+clean(h.name).replace(/[^a-zA-Z0-9_-]+/g,'_')+'.pdf';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),60000);
+  notice='Se solicitó la descarga del informe PDF. Revisa Descargas.';render();
+ }catch(e){console.error(e);alert('No se pudo generar el PDF: '+e.message)}
+}
+
+</script><script type="module">
+import {initializeApp} from 'https://www.gstatic.com/firebasejs/13.0.0/firebase-app.js';
+import {getAuth,onAuthStateChanged,signInWithEmailAndPassword,sendPasswordResetEmail,signOut} from 'https://www.gstatic.com/firebasejs/13.0.0/firebase-auth.js';
+import {getFirestore,doc,getDoc} from 'https://www.gstatic.com/firebasejs/13.0.0/firebase-firestore.js';
+const firebaseConfig={apiKey:'AIzaSyBXe6Y36KarqWzjWzV_6-wquIgxKjtv87k',authDomain:'consultraffic-e80f2.firebaseapp.com',projectId:'consultraffic-e80f2',storageBucket:'consultraffic-e80f2.firebasestorage.app',messagingSenderId:'1029742578269',appId:'1:1029742578269:web:e385cf443d4259eff75bb4'};
+const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app);
+window.ctFirebase={login:(email,password)=>signInWithEmailAndPassword(auth,email,password),reset:email=>sendPasswordResetEmail(auth,email),logout:()=>signOut(auth)};
+window.addEventListener('unhandledrejection',e=>{const el=document.querySelector('#loginMessage');if(el)el.textContent='Error de Firebase: '+(e.reason?.code||e.reason?.message||'no identificado');});
+onAuthStateChanged(auth,async user=>{
+ if(!user){window.ctOwnerAuthenticated=false;if(window.ctOwnerAuthChanged)window.ctOwnerAuthChanged(false);return;}
+ try{
+  const wait=setTimeout(()=>{const el=document.querySelector('#loginMessage');if(el)el.textContent='Firestore tarda en responder. Revisa la conexión, el dominio HTTPS y las reglas de lectura de users.'},12000);
+  let snap;try{snap=await getDoc(doc(db,'users',user.uid));}finally{clearTimeout(wait)}
+  const ok=snap.exists()&&snap.data().role==='OWNER';
+  window.ctOwnerAuthenticated=ok;
+  if(window.ctOwnerAuthChanged)window.ctOwnerAuthChanged(ok);
+ }catch(err){window.ctOwnerAuthenticated=false;if(window.ctOwnerAuthChanged)window.ctOwnerAuthChanged(false,'No se pudo verificar OWNER: '+(err?.code||err?.message||'error desconocido'));}
+});
+</script></body></html>
