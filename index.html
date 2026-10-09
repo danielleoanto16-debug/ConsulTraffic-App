@@ -43,6 +43,11 @@ input:read-only{background:#f1f5f9}
 .worker-group{display:flex;align-items:center;justify-content:space-between;gap:10px}.worker-group strong{font-size:16px}.worker-group .subline{margin:5px 0 0}.aforo-status{font-weight:800;font-size:12px;color:#15803d}.aforo-status.done{color:#475569}.delete-aforo{margin-top:9px;background:#fff!important;color:#b91c1c!important;border:1px solid #fecaca!important}.delete-aforo:active{background:#fee2e2!important}
 /* Fase 12: solicitudes y estados de autorización (simulación local) */
 .status{display:inline-block;border-radius:999px;padding:5px 10px;font-size:11px;font-weight:800;background:#fef3c7;color:#92400e}.status.ok{background:#dcfce7;color:#166534}.status.no{background:#fee2e2;color:#991b1b}.small-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px}.small-actions .btn{flex:1;padding:10px 7px;font-size:12px}.card h3{margin:0 0 8px;font-size:15px}.demo-banner{font-size:12px;background:#fff7ed;border:1px solid #fed7aa;border-radius:10px;padding:11px;color:#9a3412;margin:12px 0}.label-info{font-size:12px;color:#64748b;margin:8px 0}.status-line{display:flex;justify-content:space-between;gap:8px;align-items:center}
+
+#loginMessage{font-size:12px;font-weight:400;color:#dc2626;min-height:17px;margin:10px 0 0;text-align:center}
+#loginMessage.loading{color:#64748b}
+.login-spinner{display:inline-block;width:19px;height:19px;border:2px solid #cbd5e1;border-top-color:#1e3a8a;border-radius:50%;animation:ct-spin .75s linear infinite;vertical-align:middle}
+@keyframes ct-spin{to{transform:rotate(360deg)}}
 </style><meta name="theme-color" content="#172554"></head><body><div class="app"><header class="header"><div class="brand"><div class="mark" aria-label="ConsulTraffic">CT</div><div><strong>ConsulTraffic App</strong><small id="subtitle">Sistema de conteo vehicular</small></div></div><button id="exit" class="exit hidden">Salir</button></header><main id="view" aria-live="polite"></main><nav id="nav" class="nav hidden"></nav></div><script>
 'use strict';
 // Fase 17: inicio OWNER con Firebase; colaboradores y aforos siguen en demostración local.
@@ -79,7 +84,7 @@ function roll(now=Date.now()){
  }
  if(changed)persist();
 }
-function showOwnerLogin(error=''){role=null;subtitle.textContent='Acceso seguro del propietario';exit.classList.add('hidden');nav.classList.add('hidden');view.innerHTML=`<h1>Acceso administrador</h1><p class="muted">Ingresa con la cuenta OWNER registrada en Firebase.</p><div class="card"><label for="ownerEmail">Correo electrónico</label><input id="ownerEmail" type="email" autocomplete="username" placeholder="correo@ejemplo.com"><label for="ownerPassword">Contraseña</label><input id="ownerPassword" type="password" autocomplete="current-password"><button class="btn wide" data-action="firebase-login">Iniciar sesión</button><div class="btnrow"><button class="btn secondary" data-action="firebase-reset">Recuperar contraseña</button><button class="btn secondary" data-action="back-welcome">Volver</button></div><p id="loginMessage" class="muted" role="status">${esc(error)}</p></div>`}
+function showOwnerLogin(error=''){error=error?'No se pudo iniciar sesión. Intenta nuevamente.':'';role=null;subtitle.textContent='Acceso seguro del propietario';exit.classList.add('hidden');nav.classList.add('hidden');view.innerHTML=`<h1>Acceso administrador</h1><p class="muted">Ingresa con la cuenta OWNER registrada en Firebase.</p><div class="card"><label for="ownerEmail">Correo electrónico</label><input id="ownerEmail" type="email" autocomplete="username" placeholder="correo@ejemplo.com"><label for="ownerPassword">Contraseña</label><input id="ownerPassword" type="password" autocomplete="current-password"><button class="btn wide" data-action="firebase-login">Iniciar sesión</button><div class="btnrow"><button class="btn secondary" data-action="firebase-reset">Recuperar contraseña</button><button class="btn secondary" data-action="back-welcome">Volver</button></div><p id="loginMessage" class="muted" role="status">${esc(error)}</p></div>`}
 window.ctOwnerAuthChanged=(ok,error)=>{if(ok){role='owner';tab='inicio';access.session=null;saveAccess();render()}else if(role==='owner'||document.querySelector('#ownerEmail')){role=null;showOwnerLogin(error||'Cuenta no autorizada como propietario.')}};
 function welcome(){subtitle.textContent='Sistema de conteo vehicular';exit.classList.add('hidden');nav.classList.add('hidden');view.innerHTML=`<h1>Bienvenido</h1><p class="muted">Selecciona cómo deseas ingresar.</p><button class="choice" data-action="owner"><span class="symbol">🛡️</span><span><b>Administrador</b><small>Panel de control y reportes</small></span></button><button class="choice" data-action="worker"><span class="symbol">👷</span><span><b>Colaborador</b><small>Proyectos y conteo vehicular</small></span></button>`}
 function enter(r){if(r==='owner'&&!window.ctOwnerAuthenticated){showOwnerLogin();return}role=r;tab='inicio';access.session=r;saveAccess();render()}
@@ -101,7 +106,7 @@ function ownerView(){
  const pending=access.requests.filter(r=>requestStatus(r)==='pending');
  const active=access.requests.filter(r=>requestStatus(r)==='approved');
  const rows=access.requests.map(r=>{const status=requestStatus(r);return `<div class="card"><div class="status-line"><h3>${esc(r.name)}</h3><span class="status ${status==='approved'?'ok':status==='pending'?'':'no'}">${status==='pending'?'Pendiente':status==='approved'?'Autorizado':status==='expired'?'Vencido':status==='revoked'?'Revocado':'Rechazado'}</span></div><p class="subline">Solicitud: ${dateText(r.created)}${r.until?'<br>Vence: '+dateText(r.until):''}</p>${status==='pending'?`<label for="days-${esc(r.id)}">Duración de autorización</label><select id="days-${esc(r.id)}"><option value="1">1 día</option><option value="7" selected>7 días</option><option value="30">30 días</option><option value="90">90 días</option></select><div class="small-actions"><button class="btn green" data-approve="${esc(r.id)}">Aprobar</button><button class="btn red" data-reject="${esc(r.id)}">Rechazar</button></div>`:status==='approved'?`<div class="small-actions"><button class="btn red" data-revoke="${esc(r.id)}">Revocar acceso</button></div>`:`<div class="small-actions"><button class="btn secondary" data-renew="${esc(r.id)}">Renovar 7 días</button></div>`}</div>`}).join('');
- const banner='<div class="demo-banner">Sesión OWNER verificada con Firebase. Los aforos, colaboradores y autorizaciones de esta fase siguen siendo datos locales de demostración; aún no se sincronizan entre dispositivos.</div>';
+ const banner='';
  if(tab==='inicio')return `<h1>Panel administrador</h1>${banner}<div class="stats"><div class="stat"><strong>${active.length}</strong><small>Autorizados</small></div><div class="stat"><strong>${history.length}</strong><small>Aforos locales</small></div><div class="stat"><strong>${pending.length}</strong><small>Solicitudes</small></div></div><div class="card"><h3>Solicitudes de acceso</h3><p class="subline">${pending.length?pending.length+' solicitud(es) esperando aprobación':'No hay solicitudes pendientes.'}</p>${button('Gestionar colaboradores','usuarios','wide')}</div><div class="card"><h3>Aforos guardados en este teléfono</h3><p class="subline">${history.length} aforo(s) finalizados en almacenamiento local.</p>${button('Ver aforos','aforos','wide secondary')}</div>`;
  if(tab==='aforos')return banner+ownerAforos();
  if(tab==='usuarios')return `<h1>Colaboradores</h1>${banner}${rows||'<div class="card">No hay solicitudes todavía. Desde Colaborador puedes crear una solicitud de prueba.</div>'}`;
@@ -185,7 +190,20 @@ document.addEventListener('click',e=>{
  const btn=e.target.closest('[data-action]');if(!btn)return;const action=btn.dataset.action;
  if(action==='owner'||action==='worker')enter(action);
   else if(action==='back-welcome')welcome();
-  else if(action==='firebase-login'){const email=document.querySelector('#ownerEmail')?.value.trim(),password=document.querySelector('#ownerPassword')?.value;const msg=document.querySelector('#loginMessage');if(!email||!password){if(msg)msg.textContent='Escribe tu correo y contraseña.';return}if(!window.ctFirebase){if(msg)msg.textContent='Firebase todavía está cargando. Intenta nuevamente.';return}if(msg)msg.textContent='Verificando acceso...';const timer=setTimeout(()=>{if(document.querySelector('#loginMessage')?.textContent==='Verificando acceso...')document.querySelector('#loginMessage').textContent='La verificación está tardando demasiado. Abre la app desde una dirección HTTPS (no desde un visor de archivos) y revisa la conexión.'},12000);window.ctFirebase.login(email,password).then(()=>{clearTimeout(timer);if(document.querySelector('#loginMessage'))document.querySelector('#loginMessage').textContent='Contraseña aceptada. Comprobando permisos OWNER en Firestore...'}).catch(err=>{clearTimeout(timer);const el=document.querySelector('#loginMessage');if(el)el.textContent='Error de acceso: '+(err?.code||err?.message||'desconocido')})}
+  else if(action==='firebase-login'){
+    const email=document.querySelector('#ownerEmail')?.value.trim(),password=document.querySelector('#ownerPassword')?.value;
+    const msg=document.querySelector('#loginMessage');
+    const display=(message,loading=false)=>{if(msg){msg.classList.toggle('loading',loading);msg.innerHTML=loading?'<span class="login-spinner" role="img" aria-label="Cargando"></span>':esc(message)}};
+    if(!email||!password){display('Usuario inválido');return}
+    if(!window.ctFirebase){display('No se pudo conectar. Intenta nuevamente.');return}
+    display('',true);
+    const timer=setTimeout(()=>{if(msg?.classList.contains('loading'))display('La conexión está tardando. Intenta nuevamente.')},12000);
+    window.ctFirebase.login(email,password).then(()=>{clearTimeout(timer);if(document.querySelector('#ownerEmail'))display('',true)}).catch(err=>{
+      clearTimeout(timer);
+      const code=err?.code||'';
+      display(['auth/invalid-credential','auth/wrong-password','auth/user-not-found','auth/invalid-email'].includes(code)?'Usuario inválido':'No se pudo iniciar sesión. Intenta nuevamente.');
+    });
+  }
   else if(action==='firebase-reset'){const email=document.querySelector('#ownerEmail')?.value.trim(),msg=document.querySelector('#loginMessage');if(!email){if(msg)msg.textContent='Escribe primero tu correo para recuperar el acceso.';return}window.ctFirebase?.reset(email).then(()=>{if(msg)msg.textContent='Si el correo corresponde a una cuenta válida, recibirás instrucciones para recuperar el acceso.'}).catch(()=>{if(msg)msg.textContent='No se pudo solicitar la recuperación. Revisa el correo o la conexión.'})}
  else if(action==='request-access'&&role==='worker'){
   const name=document.getElementById('workerName')?.value.trim();if(!name){document.getElementById('workerName')?.focus();return}
@@ -318,11 +336,11 @@ import {getFirestore,doc,getDoc} from 'https://www.gstatic.com/firebasejs/13.0.0
 const firebaseConfig={apiKey:'AIzaSyBXe6Y36KarqWzjWzV_6-wquIgxKjtv87k',authDomain:'consultraffic-e80f2.firebaseapp.com',projectId:'consultraffic-e80f2',storageBucket:'consultraffic-e80f2.firebasestorage.app',messagingSenderId:'1029742578269',appId:'1:1029742578269:web:e385cf443d4259eff75bb4'};
 const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app);
 window.ctFirebase={login:(email,password)=>signInWithEmailAndPassword(auth,email,password),reset:email=>sendPasswordResetEmail(auth,email),logout:()=>signOut(auth)};
-window.addEventListener('unhandledrejection',e=>{const el=document.querySelector('#loginMessage');if(el)el.textContent='Error de Firebase: '+(e.reason?.code||e.reason?.message||'no identificado');});
+window.addEventListener('unhandledrejection',e=>{const el=document.querySelector('#loginMessage');if(el){el.classList.remove('loading');el.textContent='No se pudo conectar. Intenta nuevamente.';}});
 onAuthStateChanged(auth,async user=>{
  if(!user){window.ctOwnerAuthenticated=false;if(window.ctOwnerAuthChanged)window.ctOwnerAuthChanged(false);return;}
  try{
-  const wait=setTimeout(()=>{const el=document.querySelector('#loginMessage');if(el)el.textContent='Firestore tarda en responder. Revisa la conexión, el dominio HTTPS y las reglas de lectura de users.'},12000);
+  const wait=setTimeout(()=>{const el=document.querySelector('#loginMessage');if(el){el.classList.remove('loading');el.textContent='La conexión está tardando. Intenta nuevamente.';}},12000);
   let snap;try{snap=await getDoc(doc(db,'users',user.uid));}finally{clearTimeout(wait)}
   const ok=snap.exists()&&snap.data().role==='OWNER';
   window.ctOwnerAuthenticated=ok;
